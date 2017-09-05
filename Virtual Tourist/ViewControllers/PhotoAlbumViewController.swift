@@ -16,10 +16,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
 
     @IBOutlet weak var bottomToolbar: UIToolbar!
 
+    var albumIdentifier: String!
+
     override func viewDidLayoutSubviews() {
         setupFlowLayout()
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomToolbar.frame.size.height, right: 0)
         collectionView.scrollIndicatorInsets = collectionView.contentInset
+
+        print(albumIdentifier)
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {

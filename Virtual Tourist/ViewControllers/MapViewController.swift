@@ -23,7 +23,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
         if (sender.state == .ended) {
             let location = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
-            showAlbum(withIdentifier: "\(location.latitude), \(location.longitude)")
+            
+            dropPin(atLocation: location);
+//            showAlbum(withIdentifier: "\(location.latitude), \(location.longitude)")
         }
     }
 
@@ -44,6 +46,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
             photoAlbumViewController.albumIdentifier = albumIdentifier
         }
+    }
+
+    private func dropPin(atLocation location: CLLocationCoordinate2D) {
+        let annotation = MKPointAnnotation.init()
+        annotation.coordinate = location
+        mapView.addAnnotation(annotation)
     }
 
     private func saveMapState(withRegion region: MKCoordinateRegion) {

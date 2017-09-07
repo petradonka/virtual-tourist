@@ -8,24 +8,28 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
 
-    private var tappedAlbumIdentifier: String?
+    private var tappedPin: Pin?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        showExistingPins()
         restoreMapState()
     }
 
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
         if (sender.state == .ended) {
             let location = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
-            
-            dropPin(atLocation: location);
-//            showAlbum(withIdentifier: "\(location.latitude), \(location.longitude)")
+
+            if let pin = savePin(atLocation: location) {
+                mapView.addAnnotation(pin.annotation)
+                showAlbum(forPin: pin)
+            }
         }
     }
 
@@ -33,25 +37,73 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         saveMapState(withRegion: mapView.region)
     }
 
-    func showAlbum(withIdentifier albumIdentifier: String) {
-        tappedAlbumIdentifier = albumIdentifier
+    func showAlbum(forPin pin: Pin) {
+        tappedPin = pin
         performSegue(withIdentifier: "showAlbumSegue", sender: self)
+    }
+
+    func showExistingPins() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            print("No app delegate")
+            return
+        }
+
+        let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
+        do {
+            let pins = try appDelegate.persistentContainer.viewContext.fetch(fetchRequest)
+            mapView.addAnnotations(pins.map({ $0.annotation }))
+        } catch (let error) {
+            print(error)
+        }
+    }
+
+    func savePin(atLocation location: CLLocationCoordinate2D) -> Pin? {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            print("No app delegate")
+            return nil
+        }
+
+        let viewContext = appDelegate.persistentContainer.viewContext
+
+        let pin = Pin.init(entity: Pin.entity(), insertInto: viewContext)
+        pin.latitude = location.latitude
+        pin.longitude = location.longitude
+        appDelegate.saveContext()
+        return pin
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let photoAlbumViewController = segue.destination as? PhotoAlbumViewController, segue.identifier == "showAlbumSegue" {
-            guard let albumIdentifier = tappedAlbumIdentifier else {
-                print("There was no album identifier set. Can not open album")
+            guard let tappedPin = tappedPin else {
+                print("No tapped pin?")
                 return
             }
-            photoAlbumViewController.albumIdentifier = albumIdentifier
+            photoAlbumViewController.pin = tappedPin
         }
     }
 
-    private func dropPin(atLocation location: CLLocationCoordinate2D) {
-        let annotation = MKPointAnnotation.init()
-        annotation.coordinate = location
-        mapView.addAnnotation(annotation)
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if let annotation = annotation as? PinAnnotation {
+            let identifier = "pinAnnotation"
+
+            if let dequedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
+                dequedView.annotation = annotation
+                return dequedView
+            } else {
+                let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                view.canShowCallout = true
+                view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+                return view
+            }
+        } else {
+            return nil
+        }
+    }
+
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if let annotation = view.annotation as? PinAnnotation {
+            showAlbum(forPin: annotation.pin)
+        }
     }
 
     private func saveMapState(withRegion region: MKCoordinateRegion) {

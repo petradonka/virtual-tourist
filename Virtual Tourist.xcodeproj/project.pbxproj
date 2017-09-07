@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F0726F21F61C76B00D0F642 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0726F11F61C76B00D0F642 /* Pin.swift */; };
+		6F0726F41F61CE4000D0F642 /* PinAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0726F31F61CE4000D0F642 /* PinAnnotation.swift */; };
 		6F33ECFC1F5B1D30002600F6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F33ECFB1F5B1D30002600F6 /* AppDelegate.swift */; };
 		6F33ECFE1F5B1D30002600F6 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F33ECFD1F5B1D30002600F6 /* MapViewController.swift */; };
 		6F33ED011F5B1D30002600F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F33ECFF1F5B1D30002600F6 /* Main.storyboard */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F0726F11F61C76B00D0F642 /* Pin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
+		6F0726F31F61CE4000D0F642 /* PinAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinAnnotation.swift; sourceTree = "<group>"; };
 		6F33ECF81F5B1D30002600F6 /* Virtual Tourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Virtual Tourist.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F33ECFB1F5B1D30002600F6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6F33ECFD1F5B1D30002600F6 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -42,6 +46,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F0726F51F61D4D300D0F642 /* Pin */ = {
+			isa = PBXGroup;
+			children = (
+				6F0726F11F61C76B00D0F642 /* Pin.swift */,
+				6F0726F31F61CE4000D0F642 /* PinAnnotation.swift */,
+			);
+			path = Pin;
+			sourceTree = "<group>";
+		};
+		6F0726F61F61D4E200D0F642 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6F0726F51F61D4D300D0F642 /* Pin */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6F0726F71F61D4EC00D0F642 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				6F0726F61F61D4E200D0F642 /* Models */,
+				6F33ED021F5B1D30002600F6 /* Virtual_Tourist.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		6F0726F81F61D50900D0F642 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				6F33ED051F5B1D30002600F6 /* Assets.xcassets */,
+				6F33ED071F5B1D30002600F6 /* LaunchScreen.storyboard */,
+				6F33ED0A1F5B1D30002600F6 /* Info.plist */,
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
 		6F33ECEF1F5B1D2F002600F6 = {
 			isa = PBXGroup;
 			children = (
@@ -64,11 +104,9 @@
 			children = (
 				6F33ECFB1F5B1D30002600F6 /* AppDelegate.swift */,
 				6F33ECFF1F5B1D30002600F6 /* Main.storyboard */,
+				6F0726F71F61D4EC00D0F642 /* CoreData */,
 				6FE8858D1F5B21B700472DFB /* ViewControllers */,
-				6F33ED051F5B1D30002600F6 /* Assets.xcassets */,
-				6F33ED071F5B1D30002600F6 /* LaunchScreen.storyboard */,
-				6F33ED0A1F5B1D30002600F6 /* Info.plist */,
-				6F33ED021F5B1D30002600F6 /* Virtual_Tourist.xcdatamodeld */,
+				6F0726F81F61D50900D0F642 /* Other */,
 			);
 			path = "Virtual Tourist";
 			sourceTree = "<group>";
@@ -163,9 +201,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F0726F21F61C76B00D0F642 /* Pin.swift in Sources */,
 				6F33ECFE1F5B1D30002600F6 /* MapViewController.swift in Sources */,
 				6F33ED041F5B1D30002600F6 /* Virtual_Tourist.xcdatamodeld in Sources */,
 				6F33ECFC1F5B1D30002600F6 /* AppDelegate.swift in Sources */,
+				6F0726F41F61CE4000D0F642 /* PinAnnotation.swift in Sources */,
 				6F6C2DCC1F5B2EF80027CEFF /* PhotoAlbumViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

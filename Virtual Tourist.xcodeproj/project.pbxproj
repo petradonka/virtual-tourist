@@ -17,6 +17,7 @@
 		6F33ED091F5B1D30002600F6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F33ED071F5B1D30002600F6 /* LaunchScreen.storyboard */; };
 		6F6C2DCC1F5B2EF80027CEFF /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6C2DCB1F5B2EF80027CEFF /* PhotoAlbumViewController.swift */; };
 		6F8EBB041F5B39CA00675E42 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F8EBB031F5B39CA00675E42 /* Foundation.framework */; };
+		6FBBA24E1F63C0A000AE53FB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBBA24D1F63C0A000AE53FB /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		6F33ED0A1F5B1D30002600F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F6C2DCB1F5B2EF80027CEFF /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
 		6F8EBB031F5B39CA00675E42 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6FBBA24D1F63C0A000AE53FB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				6F0726F71F61D4EC00D0F642 /* CoreData */,
 				6FE8858D1F5B21B700472DFB /* ViewControllers */,
 				6F0726F81F61D50900D0F642 /* Other */,
+				6FBBA24D1F63C0A000AE53FB /* Constants.swift */,
 			);
 			path = "Virtual Tourist";
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 				6F33ECFE1F5B1D30002600F6 /* MapViewController.swift in Sources */,
 				6F33ED041F5B1D30002600F6 /* Virtual_Tourist.xcdatamodeld in Sources */,
 				6F33ECFC1F5B1D30002600F6 /* AppDelegate.swift in Sources */,
+				6FBBA24E1F63C0A000AE53FB /* Constants.swift in Sources */,
 				6F0726F41F61CE4000D0F642 /* PinAnnotation.swift in Sources */,
 				6F6C2DCC1F5B2EF80027CEFF /* PhotoAlbumViewController.swift in Sources */,
 			);

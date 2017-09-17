@@ -24,6 +24,10 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         collectionView.scrollIndicatorInsets = collectionView.contentInset
 
         print(pin)
+
+        FlickrAPIClient.getPhotos(atLocation: pin.coordinate) { (data, error) in
+            print(data ?? "no data", error ?? "no error")
+        }
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {

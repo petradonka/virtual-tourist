@@ -30,7 +30,7 @@ struct APIConstants {
         public static let method = "flickr.photos.search"
         public static let apiKey = APIConstants.APIKey
         public static let format = "json"
-        public static let noJsonCallback = 1
+        public static let noJsonCallback = "1"
 
         public static let radiusUnits = "km"
 

@@ -117,7 +117,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let latitude = UserDefaults.standard.double(forKey: "savedMapRegion.latitude")
         let longitude = UserDefaults.standard.double(forKey: "savedMapRegion.longitude")
 
-        if latitude > 0 && longitude > 0 {
+        if latitude != 0 && longitude != 0 {
             let latitudeDelta = UserDefaults.standard.double(forKey: "savedMapRegion.latitudeDelta")
             let longitudeDelta = UserDefaults.standard.double(forKey: "savedMapRegion.longitudeDelta")
 

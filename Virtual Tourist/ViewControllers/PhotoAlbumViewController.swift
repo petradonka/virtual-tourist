@@ -44,16 +44,26 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     }
 
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionElementKindSectionHeader:
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: "headerView",
-                                                                             for: indexPath)
-            return headerView
-        default:
-            assert(false, "Unexpected element kind")
-        }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) ->
+        UICollectionReusableView {
+            switch kind {
+            case UICollectionElementKindSectionHeader:
+                let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                                 withReuseIdentifier: "headerView",
+                                                                                 for: indexPath) as! MapHeaderCollectionReusableView
+                
+                let delta = 0.2
+                
+                let center = CLLocationCoordinate2D.init(latitude: pin.latitude, longitude: pin.longitude)
+                let span = MKCoordinateSpan.init(latitudeDelta: delta, longitudeDelta: delta)
+                
+                let region = MKCoordinateRegion.init(center: center, span: span)
+                headerView.mapView.setRegion(region, animated: true);
+                headerView.mapView.addAnnotation(pin.annotation)
+                return headerView
+            default:
+                assert(false, "Unexpected element kind")
+            }
     }
 
     func setupFlowLayout() {

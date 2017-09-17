@@ -85,7 +85,7 @@
                                         <color key="backgroundColor" red="0.48660281300000002" green="0.38794401290000002" blue="0.60399490590000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                     </collectionViewCell>
                                 </cells>
-                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="headerView" id="7yC-Ad-NOd">
+                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="headerView" id="7yC-Ad-NOd" customClass="MapHeaderCollectionReusableView" customModule="Virtual_Tourist" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
@@ -99,6 +99,9 @@
                                         <constraint firstItem="obD-yx-X3B" firstAttribute="top" secondItem="7yC-Ad-NOd" secondAttribute="top" id="afm-8e-Jhx"/>
                                         <constraint firstItem="obD-yx-X3B" firstAttribute="leading" secondItem="7yC-Ad-NOd" secondAttribute="leading" id="vp3-tB-xhw"/>
                                     </constraints>
+                                    <connections>
+                                        <outlet property="mapView" destination="obD-yx-X3B" id="8eg-iL-xCU"/>
+                                    </connections>
                                 </collectionReusableView>
                                 <connections>
                                     <outlet property="dataSource" destination="bci-Ge-VbW" id="vtL-vY-H0P"/>

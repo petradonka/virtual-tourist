@@ -18,6 +18,9 @@ struct APIConstants {
         public static let format = "format"
         public static let noJsonCallback = "nojsoncallback"
 
+        public static let page = "page"
+        public static let perPage = "per_page"
+
         public static let latitude = "lat"
         public static let longitude = "lon"
         public static let radius = "radius"
@@ -32,6 +35,10 @@ struct APIConstants {
         public static let format = "json"
         public static let noJsonCallback = "1"
 
+        public static let page = "1"
+        public static let perPage = "20"
+
+        public static let radius = "10"
         public static let radiusUnits = "km"
 
         public static let extras = "url_z"

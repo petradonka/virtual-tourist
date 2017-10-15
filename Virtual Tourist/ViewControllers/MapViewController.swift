@@ -51,6 +51,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
         do {
             let pins = try appDelegate.persistentContainer.viewContext.fetch(fetchRequest)
+            mapView.removeAnnotations(mapView.annotations)
             mapView.addAnnotations(pins.map({ $0.annotation }))
         } catch (let error) {
             print(error)

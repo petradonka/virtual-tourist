@@ -18,6 +18,8 @@ class PinAnnotation: MKPointAnnotation {
         super.init()
 
         coordinate = pin.coordinate
-        title = "Open album"
+
+        // An empty title is required for the mapView:didSelect method (to show the details without showing a callout)
+        title = " "
     }
 }

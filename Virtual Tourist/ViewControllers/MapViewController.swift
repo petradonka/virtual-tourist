@@ -91,8 +91,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 return dequedView
             } else {
                 let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = true
-                view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+                view.canShowCallout = false
                 return view
             }
         } else {
@@ -100,7 +99,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let annotation = view.annotation as? PinAnnotation {
             showAlbum(forPin: annotation.pin)
         }

@@ -23,8 +23,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomToolbar.frame.size.height, right: 0)
         collectionView.scrollIndicatorInsets = collectionView.contentInset
 
-        print(pin)
-
         FlickrAPIClient.getPhotos(atLocation: pin.coordinate) { (data, error) in
             print(data ?? "no data", error ?? "no error")
         }

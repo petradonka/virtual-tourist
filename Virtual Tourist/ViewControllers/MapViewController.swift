@@ -23,7 +23,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
-        if (sender.state == .ended) {
+        if (sender.state == .began) {
             let location = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
 
             if let pin = savePin(atLocation: location) {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="58n-Ai-NhD">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="58n-Ai-NhD">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -75,14 +75,34 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="photoCell" id="BKO-bT-Beu">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="photoCell" id="BKO-bT-Beu" customClass="PhotoCollectionViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="150" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="nUd-la-Mzu">
+                                                    <rect key="frame" x="15" y="15" width="20" height="20"/>
+                                                </activityIndicatorView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2j7-Ml-1jI">
+                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                </imageView>
+                                            </subviews>
                                         </view>
                                         <color key="backgroundColor" red="0.48660281300000002" green="0.38794401290000002" blue="0.60399490590000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <constraints>
+                                            <constraint firstItem="2j7-Ml-1jI" firstAttribute="leading" secondItem="BKO-bT-Beu" secondAttribute="leading" id="41z-9x-nUw"/>
+                                            <constraint firstAttribute="trailing" secondItem="2j7-Ml-1jI" secondAttribute="trailing" id="MMO-xz-YAI"/>
+                                            <constraint firstAttribute="bottom" secondItem="2j7-Ml-1jI" secondAttribute="bottom" id="cV8-Hc-zKH"/>
+                                            <constraint firstItem="nUd-la-Mzu" firstAttribute="centerX" secondItem="BKO-bT-Beu" secondAttribute="centerX" id="kQm-FN-nBs"/>
+                                            <constraint firstItem="2j7-Ml-1jI" firstAttribute="top" secondItem="BKO-bT-Beu" secondAttribute="top" id="qyJ-tR-xJO"/>
+                                            <constraint firstItem="nUd-la-Mzu" firstAttribute="centerY" secondItem="BKO-bT-Beu" secondAttribute="centerY" id="xCC-bI-cMO"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="imageView" destination="2j7-Ml-1jI" id="GtL-El-TqV"/>
+                                            <outlet property="loadingIndicator" destination="nUd-la-Mzu" id="JAH-Zm-1MC"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="headerView" id="7yC-Ad-NOd" customClass="MapHeaderCollectionReusableView" customModule="Virtual_Tourist" customModuleProvider="target">
@@ -112,7 +132,11 @@
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="uEg-vB-bMQ"/>
-                                    <barButtonItem title="New Collection" id="5rO-ZW-gtj"/>
+                                    <barButtonItem title="New Collection" id="5rO-ZW-gtj">
+                                        <connections>
+                                            <action selector="newCollectionButtonTapped:" destination="bci-Ge-VbW" id="lll-Qf-e0q"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="wzV-uk-GQS"/>
                                 </items>
                             </toolbar>

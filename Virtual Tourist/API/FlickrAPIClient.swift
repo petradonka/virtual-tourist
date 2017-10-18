@@ -59,7 +59,13 @@ class FlickrAPIClient {
 
             do {
                 let photosResultResponse = try PhotosResultResponse(fromData: data)
-                let randomPage = arc4random_uniform(UInt32(photosResultResponse.pages))
+
+                // After 4000 results, all page results are the same
+                // See https://stackoverflow.com/questions/1994037/flickr-api-returning-duplicate-photos and
+                // https://www.flickr.com/groups/51035612836@N01/discuss/72157680701360093/
+                let pageCount = min(photosResultResponse.pages, 4000 / Int(APIConstants.DefaultQueryValues.perPage)!)
+
+                let randomPage = arc4random_uniform(UInt32(pageCount))
                 completion(Int(randomPage), nil)
             } catch let error {
                 completion(nil, error)

@@ -43,14 +43,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
     func showExistingPins() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            print("No app delegate")
-            return
-        }
-
         let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
         do {
-            let pins = try appDelegate.persistentContainer.viewContext.fetch(fetchRequest)
+            let pins = try SharedPersistentContainer.viewContext.fetch(fetchRequest)
             mapView.removeAnnotations(mapView.annotations)
             mapView.addAnnotations(pins.map({ $0.annotation }))
         } catch (let error) {
@@ -59,17 +54,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
     func savePin(atLocation location: CLLocationCoordinate2D) -> Pin? {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            print("No app delegate")
-            return nil
-        }
-
-        let viewContext = appDelegate.persistentContainer.viewContext
+        let viewContext = SharedPersistentContainer.viewContext
 
         let pin = Pin.init(entity: Pin.entity(), insertInto: viewContext)
         pin.latitude = location.latitude
         pin.longitude = location.longitude
-        appDelegate.saveContext()
+        SharedPersistentContainer.saveContext()
+
+        pin.downloadPhotos(inViewContext: viewContext) {
+            SharedPersistentContainer.saveContext()
+        }
         return pin
     }
 

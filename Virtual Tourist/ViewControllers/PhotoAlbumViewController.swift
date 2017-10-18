@@ -8,8 +8,9 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class PhotoAlbumViewController: UIViewController {
 
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -18,50 +19,45 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
 
     var pin: Pin!
 
+    var fetchedResultsController: NSFetchedResultsController<Photo>!
+
+    var persistentContainer: NSPersistentContainer {
+        get {
+            return SharedPersistentContainer.persistentContainer
+        }
+    }
+
     override func viewDidLayoutSubviews() {
         setupFlowLayout()
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomToolbar.frame.size.height, right: 0)
         collectionView.scrollIndicatorInsets = collectionView.contentInset
+    }
 
-        FlickrAPIClient.getPhotos(atLocation: pin.coordinate) { (data, error) in
-            print(data ?? "no data", error ?? "no error")
+    override func viewDidLoad() {
+        initializeFetchedResultsController()
+    }
+
+    @IBAction func newCollectionButtonTapped(_ sender: Any) {
+        pin.downloadPhotos(inViewContext: persistentContainer.viewContext) {
+            SharedPersistentContainer.saveContext()
         }
     }
 
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
-    }
+    func initializeFetchedResultsController() {
+        let request: NSFetchRequest<Photo> = Photo.fetchRequest()
+        request.predicate = NSPredicate(format: "pin == %@", pin)
+        let sortDescriptor = NSSortDescriptor(key: "imageUrlString", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "photoCell", for: indexPath)
-        return cell
-    }
+        let moc = persistentContainer.viewContext
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
 
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) ->
-        UICollectionReusableView {
-            switch kind {
-            case UICollectionElementKindSectionHeader:
-                let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                                 withReuseIdentifier: "headerView",
-                                                                                 for: indexPath) as! MapHeaderCollectionReusableView
-                
-                let delta = 0.2
-                
-                let center = CLLocationCoordinate2D.init(latitude: pin.latitude, longitude: pin.longitude)
-                let span = MKCoordinateSpan.init(latitudeDelta: delta, longitudeDelta: delta)
-                
-                let region = MKCoordinateRegion.init(center: center, span: span)
-                headerView.mapView.setRegion(region, animated: true);
-                headerView.mapView.addAnnotation(pin.annotation)
-                return headerView
-            default:
-                assert(false, "Unexpected element kind")
-            }
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to initialize FetchedResultsController: \(error)")
+        }
     }
 
     func setupFlowLayout() {
@@ -89,4 +85,72 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         return CGSize(width: itemDimension, height: itemDimension)
     }
 
+}
+
+extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return pin.photos?.count ?? 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "photoCell", for: indexPath)
+
+        guard fetchedResultsController.sections?.count ?? 0 > indexPath.section,
+            let section = fetchedResultsController.sections?[indexPath.section],
+            section.objects?.count ?? 0 > indexPath.row else {
+                print("cell index out of bounds")
+                return cell
+        }
+
+        if let cell = cell as? PhotoCollectionViewCell {
+            let photo = fetchedResultsController.object(at: indexPath)
+            if (photo.loading) {
+                cell.loadingIndicator.startAnimating()
+            } else {
+                cell.loadingIndicator.stopAnimating()
+            }
+            cell.imageView.image = photo.image
+        }
+        return cell
+    }
+
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) ->
+        UICollectionReusableView {
+            switch kind {
+            case UICollectionElementKindSectionHeader:
+                let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                                 withReuseIdentifier: "headerView",
+                                                                                 for: indexPath) as! MapHeaderCollectionReusableView
+
+                let delta = 0.2
+
+                let center = CLLocationCoordinate2D.init(latitude: pin.latitude, longitude: pin.longitude)
+                let span = MKCoordinateSpan.init(latitudeDelta: delta, longitudeDelta: delta)
+
+                let region = MKCoordinateRegion.init(center: center, span: span)
+                headerView.mapView.setRegion(region, animated: true);
+                headerView.mapView.addAnnotation(pin.annotation)
+                return headerView
+            default:
+                assert(false, "Unexpected element kind")
+            }
+    }
+}
+
+extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        collectionView.reloadData()
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//        collectionView.reloadData()
+    }
+    
 }

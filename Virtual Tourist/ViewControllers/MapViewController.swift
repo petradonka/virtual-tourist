@@ -61,12 +61,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         pin.longitude = location.longitude
         SharedPersistentContainer.saveContext()
 
-        pin.downloadPhotos(inViewContext: viewContext) { error in
-            guard error == nil else {
-                self.handleError(error!)
-                return
+        SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
+            pin.downloadPhotos(inViewContext: context) { error in
+                guard error == nil else {
+                    self.handleError(error!)
+                    return
+                }
+                try? context.save()
             }
-            SharedPersistentContainer.saveContext()
         }
         return pin
     }

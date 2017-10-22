@@ -46,13 +46,13 @@ class PhotoAlbumViewController: UIViewController {
     }
 
     @IBAction func downloadNewPhotos(_ sender: Any) {
-        pin.downloadPhotos(inViewContext: persistentContainer.viewContext) { error in
-            guard error == nil else {
-                self.handleError(error!)
-                return
+        SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
+            self.pin.downloadPhotos(inViewContext: context) { error in
+                guard error == nil else {
+                    self.handleError(error!)
+                    return
+                }
             }
-            
-            SharedPersistentContainer.saveContext()
         }
     }
 
@@ -163,11 +163,11 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        collectionView.reloadData()
+//        collectionView.reloadData()
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //        collectionView.reloadData()
+                collectionView.reloadData()
     }
     
 }

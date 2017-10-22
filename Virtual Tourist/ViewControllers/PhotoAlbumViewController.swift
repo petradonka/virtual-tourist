@@ -163,11 +163,12 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-//        collectionView.reloadData()
-    }
-
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-                collectionView.reloadData()
+        switch type {
+        case .update:
+            collectionView.reloadItems(at: [indexPath!])
+        default:
+            collectionView.reloadData()
+        }
     }
     
 }

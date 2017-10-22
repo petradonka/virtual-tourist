@@ -105,6 +105,20 @@ class PhotoAlbumViewController: UIViewController {
 }
 
 extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard fetchedResultsController.sections?.count ?? 0 > indexPath.section,
+            let section = fetchedResultsController.sections?[indexPath.section],
+            section.objects?.count ?? 0 > indexPath.row else {
+                print("cell index out of bounds")
+                return
+        }
+
+        let photo = fetchedResultsController.object(at: indexPath)
+        SharedPersistentContainer.viewContext.delete(photo)
+        SharedPersistentContainer.saveContext()
+    }
+
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }

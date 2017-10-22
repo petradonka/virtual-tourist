@@ -37,8 +37,13 @@ class PhotoAlbumViewController: UIViewController {
         initializeFetchedResultsController()
     }
 
-    @IBAction func newCollectionButtonTapped(_ sender: Any) {
-        pin.downloadPhotos(inViewContext: persistentContainer.viewContext) {
+    @IBAction func downloadNewPhotos(_ sender: Any) {
+        pin.downloadPhotos(inViewContext: persistentContainer.viewContext) { error in
+            guard error == nil else {
+                self.handleError(error!)
+                return
+            }
+            
             SharedPersistentContainer.saveContext()
         }
     }
@@ -83,6 +88,10 @@ class PhotoAlbumViewController: UIViewController {
         let itemDimension = (rowLength - allSpacingInRow) / numberOfItemsInRow
 
         return CGSize(width: itemDimension, height: itemDimension)
+    }
+
+    private func handleError(_ error: Error) {
+        print(error) // TODO
     }
 
 }
@@ -150,7 +159,7 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        collectionView.reloadData()
+        //        collectionView.reloadData()
     }
     
 }

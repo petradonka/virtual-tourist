@@ -49,7 +49,7 @@ public class Pin: NSManagedObject {
         }
     }
 
-    func downloadPhotos(inViewContext viewContext: NSManagedObjectContext, completion: @escaping () -> Void) {
+    func downloadPhotos(inViewContext viewContext: NSManagedObjectContext, completion: @escaping (Error?) -> Void) {
         loading = true
         viewContext.performAndWait {
             self.photos?.forEach({ photo in
@@ -60,21 +60,28 @@ public class Pin: NSManagedObject {
         }
 
         FlickrAPIClient.getPhotos(atLocation: coordinate) { (data, error) in
-            self.loading = false
-            if let data = data {
-                data.photos.forEach({ photoResult in
-                    let photo = Photo.init(entity: Photo.entity(), insertInto: viewContext)
-                    photo.imageUrlString = photoResult.url
-                    photo.pin = self
-                    viewContext.insert(photo)
-                    photo.downloadPhoto {
-                        print("finished adding photo to pin")
-                        if (!self.arePhotosLoading) {
-                            completion()
-                        }
-                    }
-                })
+            guard let data  = data else {
+                completion(error!)
+                return
             }
+
+            self.loading = false
+            data.photos.forEach({ photoResult in
+                let photo = Photo.init(entity: Photo.entity(), insertInto: viewContext)
+                photo.imageUrlString = photoResult.url
+                photo.pin = self
+                viewContext.insert(photo)
+                photo.downloadPhoto { error in
+                    guard error == nil else {
+                        completion(error!)
+                        return
+                    }
+
+                    if (!self.arePhotosLoading) {
+                        completion(nil)
+                    }
+                }
+            })
         }
     }
 }

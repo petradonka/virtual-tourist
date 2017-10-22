@@ -26,21 +26,44 @@ public class Photo: NSManagedObject {
         }
     }
 
-    func downloadPhoto(completion: @escaping () -> Void) -> Void {
+    var imageUrl: URL? {
+        get {
+            guard let urlString = imageUrlString else {
+                print("No imageUrlString was present for a Photo object")
+                return nil
+            }
+
+            return URL(string: urlString)
+        }
+    }
+
+    var needsDownload: Bool {
+        get {
+            return imageData == nil && !loading
+        }
+    }
+
+    func downloadPhoto(completion: @escaping (Error?) -> Void) -> Void {
+        guard let url = imageUrl else {
+            return
+        }
+
         if (imageData == nil) {
             loading = true
-            let url = URL(string: imageUrlString!)
-            
-            DispatchQueue.global().async {
-                let data = try? Data(contentsOf: url!) //make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                guard let data = data else {
+                    completion(error!)
+                    return
+                }
+
                 self.imageData = data
                 self.loading = false
-                completion()
-            }
+                completion(nil)
+            }.resume()
         } else if (loading) {
-            completion()
+            completion(nil)
         } else {
-            completion()
+            completion(nil)
         }
     }
 }

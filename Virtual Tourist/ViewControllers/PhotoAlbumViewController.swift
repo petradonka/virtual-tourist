@@ -35,6 +35,14 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewDidLoad() {
         initializeFetchedResultsController()
+        pin.downloadMissingPhotos { error in
+            guard error == nil else {
+                self.handleError(error!)
+                return
+            }
+
+            SharedPersistentContainer.saveContext()
+        }
     }
 
     @IBAction func downloadNewPhotos(_ sender: Any) {

@@ -49,6 +49,21 @@ public class Pin: NSManagedObject {
         }
     }
 
+    var needsPhotoDownloads: Bool {
+        get {
+            guard let photos = photos else {
+                return false
+            }
+
+            return photos.reduce(false, { (needsDownload, photo) -> Bool in
+                guard let photo = photo as? Photo else {
+                    return false
+                }
+                return needsDownload || photo.needsDownload
+            })
+        }
+    }
+
     func downloadPhotos(inViewContext viewContext: NSManagedObjectContext, completion: @escaping (Error?) -> Void) {
         loading = true
         viewContext.performAndWait {
@@ -82,6 +97,29 @@ public class Pin: NSManagedObject {
                     }
                 }
             })
+        }
+    }
+
+    func downloadMissingPhotos(completion: @escaping(Error?) -> Void) {
+        if needsPhotoDownloads {
+            self.photos?.forEach { photo in
+                guard let photo = photo as? Photo else {
+                    return
+                }
+
+                if photo.needsDownload {
+                    photo.downloadPhoto { error in
+                        guard error == nil else {
+                            completion(error!)
+                            return
+                        }
+
+                        if !self.arePhotosLoading, !self.needsPhotoDownloads {
+                            completion(nil)
+                        }
+                    }
+                }
+            }
         }
     }
 }

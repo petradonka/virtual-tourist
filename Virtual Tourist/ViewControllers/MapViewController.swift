@@ -61,8 +61,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         pin.longitude = location.longitude
         SharedPersistentContainer.saveContext()
 
-        pin.downloadPhotos(inViewContext: viewContext) {
-            SharedPersistentContainer.saveContext()
+        SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
+            pin.downloadPhotos(inViewContext: context) { error in
+                guard error == nil else {
+                    self.handleError(error!)
+                    return
+                }
+                try? context.save()
+            }
         }
         return pin
     }
@@ -121,6 +127,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             let region = MKCoordinateRegion.init(center: center, span: span)
             mapView.setRegion(region, animated: true);
         }
+    }
+
+    private func handleError(_ error: Error) {
+        print(error)
     }
 
 }

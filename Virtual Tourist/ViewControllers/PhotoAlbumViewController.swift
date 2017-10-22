@@ -35,11 +35,24 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewDidLoad() {
         initializeFetchedResultsController()
+        pin.downloadMissingPhotos { error in
+            guard error == nil else {
+                self.handleError(error!)
+                return
+            }
+
+            SharedPersistentContainer.saveContext()
+        }
     }
 
-    @IBAction func newCollectionButtonTapped(_ sender: Any) {
-        pin.downloadPhotos(inViewContext: persistentContainer.viewContext) {
-            SharedPersistentContainer.saveContext()
+    @IBAction func downloadNewPhotos(_ sender: Any) {
+        SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
+            self.pin.downloadPhotos(inViewContext: context) { error in
+                guard error == nil else {
+                    self.handleError(error!)
+                    return
+                }
+            }
         }
     }
 
@@ -83,6 +96,10 @@ class PhotoAlbumViewController: UIViewController {
         let itemDimension = (rowLength - allSpacingInRow) / numberOfItemsInRow
 
         return CGSize(width: itemDimension, height: itemDimension)
+    }
+
+    private func handleError(_ error: Error) {
+        print(error) // TODO
     }
 
 }
@@ -146,11 +163,12 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        collectionView.reloadData()
-    }
-
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        collectionView.reloadData()
+        switch type {
+        case .update:
+            collectionView.reloadItems(at: [indexPath!])
+        default:
+            collectionView.reloadData()
+        }
     }
     
 }

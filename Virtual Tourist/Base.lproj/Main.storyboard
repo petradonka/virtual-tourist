@@ -109,7 +109,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="obD-yx-X3B">
+                                        <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="obD-yx-X3B">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
                                         </mapView>
                                     </subviews>
@@ -134,7 +134,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="uEg-vB-bMQ"/>
                                     <barButtonItem title="New Collection" id="5rO-ZW-gtj">
                                         <connections>
-                                            <action selector="newCollectionButtonTapped:" destination="bci-Ge-VbW" id="lll-Qf-e0q"/>
+                                            <action selector="downloadNewPhotos:" destination="bci-Ge-VbW" id="lll-Qf-e0q"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="wzV-uk-GQS"/>

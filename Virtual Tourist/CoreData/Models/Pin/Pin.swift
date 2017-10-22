@@ -49,31 +49,85 @@ public class Pin: NSManagedObject {
         }
     }
 
-    func downloadPhotos(inViewContext viewContext: NSManagedObjectContext, completion: @escaping () -> Void) {
-        loading = true
-        viewContext.performAndWait {
-            self.photos?.forEach({ photo in
-                if let photo = photo as? Photo {
-                    viewContext.delete(photo)
+    var needsPhotoDownloads: Bool {
+        get {
+            guard let photos = photos else {
+                return false
+            }
+
+            return photos.reduce(false, { (needsDownload, photo) -> Bool in
+                guard let photo = photo as? Photo else {
+                    return false
                 }
+                return needsDownload || photo.needsDownload
             })
         }
+    }
 
-        FlickrAPIClient.getPhotos(atLocation: coordinate) { (data, error) in
-            self.loading = false
-            if let data = data {
+    func downloadPhotos(inViewContext context: NSManagedObjectContext, completion: @escaping (Error?) -> Void) {
+        let pinInContext = context.object(with: self.objectID) as! Pin
+
+        context.perform {
+            pinInContext.loading = true
+
+            pinInContext.photos?.forEach({ photo in
+                if let photo = photo as? Photo {
+                    context.delete(photo)
+                    print("deleted!")
+                }
+            })
+            try? context.save()
+
+            FlickrAPIClient.getPhotos(atLocation: pinInContext.coordinate) { (data, error) in
+                guard let data  = data else {
+                    completion(error!)
+                    return
+                }
+
+                pinInContext.loading = false
                 data.photos.forEach({ photoResult in
-                    let photo = Photo.init(entity: Photo.entity(), insertInto: viewContext)
+                    let photo = Photo.init(entity: Photo.entity(), insertInto: context)
                     photo.imageUrlString = photoResult.url
-                    photo.pin = self
-                    viewContext.insert(photo)
-                    photo.downloadPhoto {
-                        print("finished adding photo to pin")
-                        if (!self.arePhotosLoading) {
-                            completion()
+                    photo.pin = pinInContext
+
+                    photo.downloadPhoto { error in
+                        guard error == nil else {
+                            completion(error!)
+                            return
+                        }
+
+                        print("downloaded&added photo")
+                        try? context.save()
+
+                        if (!pinInContext.arePhotosLoading) {
+                            completion(nil)
                         }
                     }
                 })
+            }
+        }
+
+    }
+
+    func downloadMissingPhotos(completion: @escaping(Error?) -> Void) {
+        if needsPhotoDownloads {
+            self.photos?.forEach { photo in
+                guard let photo = photo as? Photo else {
+                    return
+                }
+
+                if photo.needsDownload {
+                    photo.downloadPhoto { error in
+                        guard error == nil else {
+                            completion(error!)
+                            return
+                        }
+
+                        if !self.arePhotosLoading, !self.needsPhotoDownloads {
+                            completion(nil)
+                        }
+                    }
+                }
             }
         }
     }

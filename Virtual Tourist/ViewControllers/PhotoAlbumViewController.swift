@@ -15,6 +15,7 @@ class PhotoAlbumViewController: UIViewController {
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var collectionView: UICollectionView!
 
+    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     @IBOutlet weak var bottomToolbar: UIToolbar!
 
     var pin: Pin!
@@ -35,6 +36,11 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewDidLoad() {
         initializeFetchedResultsController()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        self.newCollectionButton.isEnabled = !pin.loading
+
         pin.downloadMissingPhotos { error in
             guard error == nil else {
                 self.handleError(error!)
@@ -42,15 +48,24 @@ class PhotoAlbumViewController: UIViewController {
             }
 
             SharedPersistentContainer.saveContext()
+            DispatchQueue.main.async {
+                self.newCollectionButton.isEnabled = !self.pin.loading
+            }
         }
     }
 
     @IBAction func downloadNewPhotos(_ sender: Any) {
+        newCollectionButton.isEnabled = false
         SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
             self.pin.downloadPhotos(inViewContext: context) { error in
                 guard error == nil else {
                     self.handleError(error!)
                     return
+                }
+
+                try? context.save()
+                DispatchQueue.main.async {
+                    self.newCollectionButton.isEnabled = !self.pin.loading
                 }
             }
         }
@@ -182,6 +197,16 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
             collectionView.reloadItems(at: [indexPath!])
         default:
             collectionView.reloadData()
+        }
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        if pin.hasMissingPhotos {
+            print("not enabled, loading: \(pin.loading), missing photos: \(pin.hasMissingPhotos)")
+            newCollectionButton.isEnabled = false
+        } else {
+            print("enabled, loading: \(pin.loading), missing photos: \(pin.hasMissingPhotos)")
+            newCollectionButton.isEnabled = true
         }
     }
     

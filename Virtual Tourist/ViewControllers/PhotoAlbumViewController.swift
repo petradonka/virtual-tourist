@@ -18,6 +18,8 @@ class PhotoAlbumViewController: UIViewController {
     @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     @IBOutlet weak var bottomToolbar: UIToolbar!
 
+    @IBOutlet weak var noPhotosLabel: UILabel!
+
     var pin: Pin!
 
     var fetchedResultsController: NSFetchedResultsController<Photo>!
@@ -36,10 +38,12 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewDidLoad() {
         initializeFetchedResultsController()
+        noPhotosLabel.isHidden = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        self.newCollectionButton.isEnabled = !pin.loading
+        newCollectionButton.isEnabled = !pin.loading
+        noPhotosLabel.isHidden = true
 
         pin.downloadMissingPhotos { error in
             guard error == nil else {
@@ -50,12 +54,14 @@ class PhotoAlbumViewController: UIViewController {
             SharedPersistentContainer.saveContext()
             DispatchQueue.main.async {
                 self.newCollectionButton.isEnabled = !self.pin.loading
+                self.noPhotosLabel.isHidden = self.pin.photos!.count > 0 || self.pin.loading
             }
         }
     }
 
     @IBAction func downloadNewPhotos(_ sender: Any) {
         newCollectionButton.isEnabled = false
+        noPhotosLabel.isHidden = true
         SharedPersistentContainer.persistentContainer.performBackgroundTask { context in
             self.pin.downloadPhotos(inViewContext: context) { error in
                 guard error == nil else {
@@ -66,6 +72,7 @@ class PhotoAlbumViewController: UIViewController {
                 try? context.save()
                 DispatchQueue.main.async {
                     self.newCollectionButton.isEnabled = !self.pin.loading
+                    self.noPhotosLabel.isHidden = self.pin.photos!.count > 0
                 }
             }
         }
@@ -165,7 +172,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
         return cell
     }
 
-
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) ->
         UICollectionReusableView {
             switch kind {
@@ -201,13 +207,8 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        if pin.hasMissingPhotos {
-            print("not enabled, loading: \(pin.loading), missing photos: \(pin.hasMissingPhotos)")
-            newCollectionButton.isEnabled = false
-        } else {
-            print("enabled, loading: \(pin.loading), missing photos: \(pin.hasMissingPhotos)")
-            newCollectionButton.isEnabled = true
-        }
+        newCollectionButton.isEnabled = !pin.hasMissingPhotos
+        noPhotosLabel.isHidden = pin.photos!.count > 0 || pin.loading
     }
     
 }

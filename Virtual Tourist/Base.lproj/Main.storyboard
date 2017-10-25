@@ -156,6 +156,7 @@
                         <outlet property="bottomToolbar" destination="OAE-y2-BDd" id="Glg-Ns-N2l"/>
                         <outlet property="collectionView" destination="Hx0-k3-hlQ" id="HUC-Ls-RkY"/>
                         <outlet property="flowLayout" destination="ZJb-Kt-wHx" id="5ed-U9-iQP"/>
+                        <outlet property="newCollectionButton" destination="5rO-ZW-gtj" id="Z3n-ht-ueV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iMN-sm-v8A" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -34,41 +34,22 @@ public class Pin: NSManagedObject {
         }
     }
 
-    var arePhotosLoading: Bool {
-        get  {
-            guard let photos = photos else {
-                return false
-            }
-
-            return photos.reduce(false, { (areLoading, photo) -> Bool in
-                guard let photo = photo as? Photo else {
-                    return false
-                }
-                return areLoading || photo.loading
-            })
-        }
-    }
-
-    var needsPhotoDownloads: Bool {
+    var hasMissingPhotos: Bool {
         get {
             guard let photos = photos else {
                 return false
             }
 
-            return photos.reduce(false, { (needsDownload, photo) -> Bool in
-                guard let photo = photo as? Photo else {
-                    return false
-                }
-                return needsDownload || photo.needsDownload
-            })
+            return photos.contains { ($0 as! Photo).imageData == nil }
         }
     }
 
     func downloadPhotos(inViewContext context: NSManagedObjectContext, completion: @escaping (Error?) -> Void) {
-        let pinInContext = context.object(with: self.objectID) as! Pin
+        let pinInContext = context.object(with: objectID) as! Pin
 
         context.perform {
             pinInContext.loading = true
+            self.loading = true
 
             pinInContext.photos?.forEach({ photo in
                 if let photo = photo as? Photo {
@@ -76,7 +57,6 @@ public class Pin: NSManagedObject {
                     print("deleted!")
                 }
             })
-            try? context.save()
 
             FlickrAPIClient.getPhotos(atLocation: pinInContext.coordinate) { (data, error) in
                 guard let data  = data else {
@@ -84,7 +64,6 @@ public class Pin: NSManagedObject {
                     return
                 }
 
-                pinInContext.loading = false
                 data.photos.forEach({ photoResult in
                     let photo = Photo.init(entity: Photo.entity(), insertInto: context)
                     photo.imageUrlString = photoResult.url
@@ -99,7 +78,9 @@ public class Pin: NSManagedObject {
                         print("downloaded&added photo")
                         try? context.save()
 
-                        if (!pinInContext.arePhotosLoading) {
+                        if !pinInContext.hasMissingPhotos {
+                            pinInContext.loading = false
+                            self.loading = false
                             completion(nil)
                         }
                     }
@@ -110,7 +91,8 @@ public class Pin: NSManagedObject {
     }
 
     func downloadMissingPhotos(completion: @escaping(Error?) -> Void) {
-        if needsPhotoDownloads {
+        if hasMissingPhotos {
+            loading = true
             self.photos?.forEach { photo in
                 guard let photo = photo as? Photo else {
                     return
@@ -119,16 +101,20 @@ public class Pin: NSManagedObject {
                 if photo.needsDownload {
                     photo.downloadPhoto { error in
                         guard error == nil else {
+                            self.loading = false
                             completion(error!)
                             return
                         }
 
-                        if !self.arePhotosLoading, !self.needsPhotoDownloads {
+                        if !self.hasMissingPhotos {
+                            self.loading = false
                             completion(nil)
                         }
                     }
                 }
             }
+        } else {
+            completion(nil)
         }
     }
 }

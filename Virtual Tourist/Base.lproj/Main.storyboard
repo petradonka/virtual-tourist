@@ -140,12 +140,20 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="wzV-uk-GQS"/>
                                 </items>
                             </toolbar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Photos" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o2b-Ds-uzH">
+                                <rect key="frame" x="147.5" y="323.5" width="80" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="glx-Hk-DQX" firstAttribute="top" secondItem="Hx0-k3-hlQ" secondAttribute="bottom" id="9yv-og-OTi"/>
+                            <constraint firstItem="o2b-Ds-uzH" firstAttribute="centerY" secondItem="TcJ-zw-da5" secondAttribute="centerY" id="BSU-ju-q7P"/>
                             <constraint firstItem="OAE-y2-BDd" firstAttribute="leading" secondItem="TcJ-zw-da5" secondAttribute="leading" id="JDv-aN-0A7"/>
                             <constraint firstItem="Hx0-k3-hlQ" firstAttribute="leading" secondItem="TcJ-zw-da5" secondAttribute="leading" id="KFG-vc-BOl"/>
+                            <constraint firstItem="o2b-Ds-uzH" firstAttribute="centerX" secondItem="TcJ-zw-da5" secondAttribute="centerX" id="KSj-d1-Llx"/>
                             <constraint firstItem="Hx0-k3-hlQ" firstAttribute="top" secondItem="0hq-yR-eqf" secondAttribute="bottom" id="YWX-6q-yPu"/>
                             <constraint firstAttribute="trailing" secondItem="OAE-y2-BDd" secondAttribute="trailing" id="dBK-Ea-MWM"/>
                             <constraint firstItem="glx-Hk-DQX" firstAttribute="top" secondItem="OAE-y2-BDd" secondAttribute="bottom" id="thj-OC-yNJ"/>
@@ -157,6 +165,7 @@
                         <outlet property="collectionView" destination="Hx0-k3-hlQ" id="HUC-Ls-RkY"/>
                         <outlet property="flowLayout" destination="ZJb-Kt-wHx" id="5ed-U9-iQP"/>
                         <outlet property="newCollectionButton" destination="5rO-ZW-gtj" id="Z3n-ht-ueV"/>
+                        <outlet property="noPhotosLabel" destination="o2b-Ds-uzH" id="nlj-99-wu9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iMN-sm-v8A" userLabel="First Responder" sceneMemberID="firstResponder"/>

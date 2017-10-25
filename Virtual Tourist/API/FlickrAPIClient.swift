@@ -17,6 +17,23 @@ enum FlickrError: Error {
     case other(message: String)
 }
 
+extension FlickrError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .apiError(let message):
+            return message
+        case .networkError(let message):
+            return message
+        case .serviceNotAvailable:
+            return "Service not available"
+        case .noResults:
+            return "No results found"
+        case .other(let message):
+            return message
+        }
+    }
+}
+
 class FlickrAPIClient {
     public static func getPhotos(atLocation coordinates: CLLocationCoordinate2D, completion: @escaping (PhotosResultResponse?, Error?) -> Void) {
         let url = FlickrAPIClient.URLToSearchPhotos(onPage: 1, forLocation: coordinates)!

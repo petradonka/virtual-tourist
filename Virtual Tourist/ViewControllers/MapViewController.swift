@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
 
@@ -31,10 +31,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 showAlbum(forPin: pin)
             }
         }
-    }
-
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        saveMapState(withRegion: mapView.region)
     }
 
     func showAlbum(forPin pin: Pin) {
@@ -83,29 +79,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        if let annotation = annotation as? PinAnnotation {
-            let identifier = "pinAnnotation"
-
-            if let dequedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
-                dequedView.annotation = annotation
-                return dequedView
-            } else {
-                let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                view.canShowCallout = false
-                return view
-            }
-        } else {
-            return nil
-        }
-    }
-
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let annotation = view.annotation as? PinAnnotation {
-            showAlbum(forPin: annotation.pin)
-        }
-    }
-
     private func saveMapState(withRegion region: MKCoordinateRegion) {
         UserDefaults.standard.set(region.center.latitude, forKey: "savedMapRegion.latitude")
         UserDefaults.standard.set(region.center.longitude, forKey: "savedMapRegion.longitude")
@@ -130,7 +103,40 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
 
     private func handleError(_ error: Error) {
-        print(error)
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+
+}
+
+extension MapViewController: MKMapViewDelegate {
+
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        saveMapState(withRegion: mapView.region)
+    }
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if let annotation = annotation as? PinAnnotation {
+            let identifier = "pinAnnotation"
+
+            if let dequedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
+                dequedView.annotation = annotation
+                return dequedView
+            } else {
+                let view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                view.canShowCallout = false
+                return view
+            }
+        } else {
+            return nil
+        }
+    }
+
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if let annotation = view.annotation as? PinAnnotation {
+            showAlbum(forPin: annotation.pin)
+        }
     }
 
 }

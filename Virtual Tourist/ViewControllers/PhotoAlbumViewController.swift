@@ -121,7 +121,9 @@ class PhotoAlbumViewController: UIViewController {
     }
 
     private func handleError(_ error: Error) {
-        print(error) // TODO
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 
 }

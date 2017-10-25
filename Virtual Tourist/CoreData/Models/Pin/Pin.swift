@@ -60,8 +60,17 @@ public class Pin: NSManagedObject {
 
             FlickrAPIClient.getPhotos(atLocation: pinInContext.coordinate) { (data, error) in
                 guard let data  = data else {
+                    pinInContext.loading = false
+                    self.loading = false
                     completion(error!)
                     return
+                }
+
+                if data.photos.count < 1 {
+                    try? context.save()
+                    pinInContext.loading = false
+                    self.loading = false
+                    completion(nil)
                 }
 
                 data.photos.forEach({ photoResult in
